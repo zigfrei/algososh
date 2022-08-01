@@ -6,17 +6,13 @@ import { Circle } from "../ui/circle/circle";
 import styles from "./fibonacci-page.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { sleep } from "../../utils/utils";
 
 export const FibonacciPage: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [loader, setLoder] = useState(false);
-  const [numberValue, setNumberValue] = useState<number>();
   const [disabled, setDisabled] = useState(false);
   let temp: { number: string; index: number }[] = [];
-
-  function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   const [circles, setCircles] = useState(
     <div className={styles.circles}></div>
@@ -40,21 +36,13 @@ export const FibonacciPage: React.FC = () => {
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue((e.target as unknown as HTMLTextAreaElement).value);
-  };
-
-  useEffect(() => {
-    setNumberValue(Number(inputValue));
-    setButtonState();
-  });
-
-  const setButtonState = () => {
-    if (numberValue != undefined) {
-      if (numberValue < 1 || numberValue > 19 || numberValue === null) {
-        setDisabled(true);
-      } else {
-        setDisabled(false);
-      }
+    let tempNumber = Number((e.target as unknown as HTMLTextAreaElement).value);
+    if (tempNumber < 1) {
+      setInputValue("1");
+    } else if (tempNumber > 19) {
+      setInputValue("19");
+    } else {
+      setInputValue(`${tempNumber}`);
     }
   };
 
@@ -62,27 +50,27 @@ export const FibonacciPage: React.FC = () => {
     e.preventDefault();
     setLoder(true);
 
-    if (numberValue) {
-      temp.push({ number: `1`, index: 0 });
+    temp.push({ number: `1`, index: 0 });
+    drawCircles();
+    await sleep(SHORT_DELAY_IN_MS);
+
+    temp.push({ number: `1`, index: 1 });
+    drawCircles();
+    await sleep(SHORT_DELAY_IN_MS);
+
+    let a = 1;
+    let b = 1;
+    for (let i = 3; i <= Number(inputValue) + 1; i++) {
+      let c = a + b;
+      a = b;
+      b = c;
+      temp.push({ number: `${b}`, index: i - 1 });
       drawCircles();
       await sleep(SHORT_DELAY_IN_MS);
-
-      temp.push({ number: `1`, index: 1 });
-      drawCircles();
-      await sleep(SHORT_DELAY_IN_MS);
-
-      let a = 1;
-      let b = 1;
-      for (let i = 3; i <= numberValue + 1; i++) {
-        let c = a + b;
-        a = b;
-        b = c;
-        temp.push({ number: `${b}`, index: i - 1 });
-        drawCircles();
-        await sleep(SHORT_DELAY_IN_MS);
-      }
     }
+
     setLoder(false);
+    setInputValue("");
   };
 
   return (
@@ -100,7 +88,7 @@ export const FibonacciPage: React.FC = () => {
           text="Рассчитать"
           onClick={calculateFibonacci}
           isLoader={loader}
-          disabled={disabled}
+          disabled={inputValue ? false : true}
         ></Button>{" "}
       </div>
       {circles}

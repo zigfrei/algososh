@@ -1,7 +1,6 @@
 import React from "react";
 import Marquee from "react-fast-marquee";
 import { Link } from "react-router-dom";
-
 import styles from "./main-page.module.css";
 
 interface MainPageProps {

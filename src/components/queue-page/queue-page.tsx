@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import { Queue } from "./queue";
+import { sleep } from "../../utils/utils";
 
 export interface IQueue {
   letter: string;
@@ -18,7 +19,7 @@ export interface IQueue {
 
 export const QueuePage: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
-const queueSize = 7;
+  const queueSize = 7;
   const [queue, setQueue] = useState(new Queue<IQueue>({ size: queueSize }));
   let temp: (IQueue | null)[] = [];
 
@@ -74,10 +75,6 @@ const queueSize = 7;
   const [disabled, setDisabled] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [clearLoader, setClearLoader] = useState(false);
-
-  function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue((e.target as unknown as HTMLTextAreaElement).value);

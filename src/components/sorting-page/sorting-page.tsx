@@ -10,6 +10,7 @@ import { ElementStates } from "../../types/element-states";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { Direction } from "../../types/direction";
 import { DELAY_IN_MS } from "../../constants/delays";
+import { sleep, getRandomInt } from "../../utils/utils";
 
 interface IArray {
   index: number;
@@ -28,22 +29,12 @@ export const SortingPage: React.FC = () => {
   let temp: { index: number; state: ElementStates }[] = [];
   let arr: string[] = [];
 
-  function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  const getRandomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
   const randomArr = () => {
     temp = [];
     const length = getRandomInt(3, 17);
-    console.log(length);
     for (let i = 0; i < length; i++) {
       temp.push({ index: getRandomInt(1, 100), state: ElementStates.Default });
     }
-    console.log(temp);
     drawArr();
     setArrValue(temp);
   };
@@ -69,6 +60,10 @@ export const SortingPage: React.FC = () => {
     );
   };
 
+  useEffect(() => {
+    randomArr();
+  }, []);
+
   const ascendingSort = async () => {
     setAscendingLoder(true);
     setDisabled(true);
@@ -93,7 +88,6 @@ export const SortingPage: React.FC = () => {
             temp[i].state = ElementStates.Default;
             temp[i + 1].state = ElementStates.Default;
             await sleep(500);
-            console.log(temp);
           }
         }
         temp[j].state = ElementStates.Modified;
@@ -158,7 +152,6 @@ export const SortingPage: React.FC = () => {
             temp[i].state = ElementStates.Default;
             temp[i + 1].state = ElementStates.Default;
             await sleep(500);
-            console.log(temp);
           }
         }
         temp[j].state = ElementStates.Modified;

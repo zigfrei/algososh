@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { Stack } from "./stack";
 import { ElementStates } from "../../types/element-states";
+import { sleep } from "../../utils/utils";
 
 export interface IStack {
   letter: string;
@@ -32,10 +33,6 @@ export const StackPage: React.FC = () => {
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [clearLoader, setClearLoader] = useState(false);
 
-  function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue((e.target as unknown as HTMLTextAreaElement).value);
   };
@@ -46,7 +43,6 @@ export const StackPage: React.FC = () => {
     setInputValue("");
     const element = { letter: inputValue, state: ElementStates.Changing };
     stack.push(element);
-    console.log(stack, stack.toArray());
     temp = stack.toArray();
     drawCircles();
 
@@ -55,7 +51,6 @@ export const StackPage: React.FC = () => {
     await sleep(SHORT_DELAY_IN_MS);
     element.state = ElementStates.Default;
     setStack(new Stack(stack.toArray()));
-    console.log(stackValues, stack, stack.toArray());
     temp = stack.toArray();
     drawCircles();
     setAddLoader(false);

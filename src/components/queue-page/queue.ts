@@ -1,6 +1,7 @@
 interface IQueue<T> {
   enqueue: (item: T) => void;
   dequeue: () => void;
+  clear: () => void;
   peak: () => T | null;
   isEmpty: () => void;
   toArray: () => (T | null)[];
@@ -53,6 +54,13 @@ export class Queue<T> implements IQueue<T> {
     this.container[this.head % this.size] = null;
     this.head += 1;
     this.length -= 1;
+  };
+
+  clear = () => {
+    this.head = 0;
+    this.tail = 0;
+    this.length = 0;
+    this.container.length = 0;
   };
 
   peak = (): T | null => {

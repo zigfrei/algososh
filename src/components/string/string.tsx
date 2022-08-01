@@ -7,16 +7,13 @@ import styles from "./string.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
+import { sleep } from "../../utils/utils";
 
 export const StringComponent: React.FC = () => {
   const [stringValue, setStringValue] = useState("");
   const [loader, setLoder] = useState(false);
   let temp: { letter: string; color: ElementStates }[] = [];
   let arr: string[] = [];
-
-  function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   const [circles, setCircles] = useState(
     <div className={styles.circles}></div>
@@ -79,6 +76,7 @@ export const StringComponent: React.FC = () => {
       drawCircles();
     }
     setLoder(false);
+    setStringValue('');
   };
 
   return (
@@ -89,6 +87,7 @@ export const StringComponent: React.FC = () => {
           maxLength={11}
           isLimitText={true}
           extraClass="mr-6 mb-40"
+
           value={stringValue}
           onChange={(e) =>
             setStringValue((e.target as HTMLTextAreaElement).value)
@@ -97,6 +96,7 @@ export const StringComponent: React.FC = () => {
         <Button
           text="Развернуть"
           onClick={reverseString}
+          disabled={stringValue ? false : true}
           isLoader={loader}
         ></Button>{" "}
       </div>

@@ -7,22 +7,24 @@ import styles from "./list-page.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
-import { List } from "./list";
+import { LinkedList } from "./linkedList";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
+import { sleep } from "../../utils/utils";
 
 export interface IList {
   letter: string;
   state: ElementStates;
   head?: string;
   tail?: string;
+
 }
 
 export const ListPage: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [indexInput, setIndexInput] = useState("");
-  const [list, setList] = useState(new List<IList>());
+  const [list, setList] = useState(new LinkedList<IList>());
   const [disabled, setDisabled] = useState(false);
-
+  const [disabledByIndex, setDisabledByIndex] = useState(false);
   const [addHeadLoader, setAddHeadLoader] = useState(false);
   const [addTailLoader, setAddTailLoader] = useState(false);
   const [deleteHeadLoader, setDeleteHeadLoader] = useState(false);
@@ -35,6 +37,10 @@ export const ListPage: React.FC = () => {
   };
 
   const onIndexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // let tempIndex = Number((e.target as unknown as HTMLTextAreaElement).value);
+    // if(tempIndex<0 || tempIndex >( list.getSize()-1) || isNaN(tempIndex)){
+    //   setDisabledByIndex(true);
+    // }else {setDisabledByIndex(false)}
     setIndexInput((e.target as unknown as HTMLTextAreaElement).value);
   };
 
@@ -56,8 +62,17 @@ export const ListPage: React.FC = () => {
       letter: String(element),
       state: ElementStates.Default,
     }));
-    setList(new List(array));
+    setList(new LinkedList(array));
   }, [setList]);
+
+  useEffect(() => {
+    let tempIndex = Number(indexInput);
+    if(tempIndex<0 || tempIndex >( list.getSize()-1) || isNaN(tempIndex)){
+      setDisabledByIndex(true);
+    }else {setDisabledByIndex(false)}
+  }, [indexInput, list]);
+
+
 
   const [circles, setCircles] = useState(
     <div className={styles.circles}></div>
@@ -114,10 +129,6 @@ export const ListPage: React.FC = () => {
     drawCircles();
   }, [list]);
 
-  function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   const listPrepend = async () => {
     setInputValue("");
     setDisabled(true);
@@ -127,7 +138,7 @@ export const ListPage: React.FC = () => {
     if (headElement) {
       headElement.value.head = inputValue;
     }
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     if (headElement) {
@@ -135,11 +146,11 @@ export const ListPage: React.FC = () => {
     }
     const element = { letter: inputValue, state: ElementStates.Modified };
     list.prepend(element);
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     element.state = ElementStates.Default;
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
 
     setDisabled(false);
     setAddHeadLoader(false);
@@ -154,7 +165,7 @@ export const ListPage: React.FC = () => {
     if (tailElement) {
       tailElement.value.head = inputValue;
     }
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     if (tailElement) {
@@ -162,11 +173,11 @@ export const ListPage: React.FC = () => {
     }
     const element = { letter: inputValue, state: ElementStates.Modified };
     list.append(element);
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     element.state = ElementStates.Default;
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
 
     setDisabled(false);
     setAddTailLoader(false);
@@ -181,11 +192,11 @@ export const ListPage: React.FC = () => {
       headElement.value.head = headElement.value.letter;
       headElement.value.letter = "";
     }
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     list.deleteHead();
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
 
     setDisabled(false);
     setDeleteHeadLoader(false);
@@ -200,11 +211,11 @@ export const ListPage: React.FC = () => {
       tailElement.value.tail = tailElement.value.letter;
       tailElement.value.letter = "";
     }
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     list.deleteTail();
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
 
     setDisabled(false);
     setDeleteTailLoader(false);
@@ -228,7 +239,7 @@ export const ListPage: React.FC = () => {
         findingElement.head = inputValue;
       }
 
-      setList(new List(list.toArray()));
+      setList(new LinkedList(list.toArray()));
       await sleep(SHORT_DELAY_IN_MS);
     }
 
@@ -243,11 +254,11 @@ export const ListPage: React.FC = () => {
     }
     const element = { letter: inputValue, state: ElementStates.Modified };
     list.addByIndex(element, Number(indexInput));
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
     await sleep(SHORT_DELAY_IN_MS);
 
     element.state = ElementStates.Default;
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
 
     setDisabled(false);
     setAddByIndexLoader(false);
@@ -268,7 +279,7 @@ export const ListPage: React.FC = () => {
         }
       }
 
-      setList(new List(list.toArray()));
+      setList(new LinkedList(list.toArray()));
       await sleep(SHORT_DELAY_IN_MS);
     }
 
@@ -280,7 +291,7 @@ export const ListPage: React.FC = () => {
     }
 
     list.deleteByIndex(Number(indexInput));
-    setList(new List(list.toArray()));
+    setList(new LinkedList(list.toArray()));
 
     setDisabled(false);
     setDeleteByIndexLoader(false);
@@ -339,14 +350,14 @@ export const ListPage: React.FC = () => {
             onClick={addElementByIndex}
             linkedList="big"
             isLoader={addByIndexLoader}
-            disabled={inputIsEmpty || indexInputIsEmpty || disabled}
+            disabled={inputIsEmpty || indexInputIsEmpty || disabled || disabledByIndex}
           />
           <Button
             text="Удалить по индексу"
             onClick={deleteElementByIndex}
             linkedList="big"
             isLoader={deleteByIndexLoader}
-            disabled={linkedListIsEmpty || indexInputIsEmpty || disabled}
+            disabled={linkedListIsEmpty || indexInputIsEmpty || disabled || disabledByIndex}
           />
         </div>
       </div>
