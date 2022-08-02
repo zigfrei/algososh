@@ -1,0 +1,13 @@
+.content {
+  margin: 0 auto;
+  max-width: 520px;
+  display: flex;
+}
+
+.circles {
+  display: flex;
+  max-width: 1012px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 48px auto 0 auto;
+}
