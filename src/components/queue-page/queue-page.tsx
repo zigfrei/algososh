@@ -31,12 +31,12 @@ export const QueuePage: React.FC = () => {
   );
 
   const [circles, setCircles] = useState(
-    <div className={styles.circles}></div>
+    <div className={styles.circles} ></div>
   );
 
   const drawCircles = () => {
     setCircles(
-      <div className={styles.circles}>
+      <div className={styles.circles} >
         {temp.map((el, index, array) => {
           return (
             <Circle
@@ -154,6 +154,7 @@ export const QueuePage: React.FC = () => {
           extraClass="mr-6"
           value={inputValue}
           onChange={onChange}
+          data-testid="input"
         ></Input>
         <Button
           text="Добавить"
@@ -161,6 +162,7 @@ export const QueuePage: React.FC = () => {
           isLoader={addLoader}
           disabled={disabled || inputIsEmpty}
           extraClass="mr-6"
+          data-testid="addButton"
         ></Button>{" "}
         <Button
           text="Удалить"
@@ -168,6 +170,7 @@ export const QueuePage: React.FC = () => {
           isLoader={deleteLoader}
           disabled={disabled || queueIsEmpty}
           extraClass="mr-40"
+          data-testid="deleteButton"
         ></Button>{" "}
         <Button
           text="Очистить"
@@ -175,6 +178,7 @@ export const QueuePage: React.FC = () => {
           isLoader={clearLoader}
           disabled={disabled || queueIsEmpty}
           extraClass="mr-6"
+          data-testid="clearButton"
         ></Button>{" "}
       </div>
       {circles}

@@ -95,12 +95,12 @@ export const StackPage: React.FC = () => {
   };
 
   const [circles, setCircles] = useState(
-    <div className={styles.circles}></div>
+    <div className={styles.circles} data-testid="circles"></div>
   );
 
   const drawCircles = () => {
     setCircles(
-      <div className={styles.circles}>
+      <div className={styles.circles} data-testid="circles">
         {temp.map((el, index, array) => {
           return (
             <Circle
@@ -127,6 +127,7 @@ export const StackPage: React.FC = () => {
           extraClass="mr-6"
           value={inputValue}
           onChange={onChange}
+          data-testid="input"
         ></Input>
         <Button
           text="Добавить"
@@ -134,6 +135,8 @@ export const StackPage: React.FC = () => {
           isLoader={addLoader}
           disabled={disabled || inputIsEmpty}
           extraClass="mr-6"
+          data-testid="addButton"
+
         ></Button>{" "}
         <Button
           text="Удалить"
@@ -141,6 +144,7 @@ export const StackPage: React.FC = () => {
           isLoader={deleteLoader}
           disabled={disabled || stackIsEmpty}
           extraClass="mr-40"
+          data-testid="deleteButton"
         ></Button>{" "}
         <Button
           text="Очистить"
@@ -148,6 +152,7 @@ export const StackPage: React.FC = () => {
           isLoader={clearLoader}
           disabled={disabled || stackIsEmpty}
           extraClass="mr-6"
+          data-testid="clearButton"
         ></Button>{" "}
       </div>
       {circles}
