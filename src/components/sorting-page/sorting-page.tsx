@@ -1,67 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
-import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
-import { Circle } from "../ui/circle/circle";
 import { Column } from "../ui/column/column";
 import styles from "./sorting-page.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { ElementStates } from "../../types/element-states";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { Direction } from "../../types/direction";
-import { DELAY_IN_MS } from "../../constants/delays";
-import { sleep, getRandomInt } from "../../utils/utils";
-
-interface IArray {
-  index: number;
-  state: ElementStates;
-}
+import { ISortingColumn } from "../../types/sorting-column";
+import {
+  randomArr,
+  ascendingBubleSort,
+  descendingBubleSort,
+  ascendingSelectSort,
+  descendingSelectSort,
+} from "./utils";
 
 export const SortingPage: React.FC = () => {
-  const [arrValue, setArrValue] = useState<IArray[]>();
+  const [arrValue, setArrValue] = useState<ISortingColumn[]>([]);
+
   const [typeOfSort, setTypeOfSort] = useState("Selection");
   const [ascendingLoader, setAscendingLoder] = useState(false);
   const [descendingLoader, setDescendingLoder] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [sortingArray, setSortingArray] = useState(
-    <div className={styles.columns}></div>
-  );
-  let temp: { index: number; state: ElementStates }[] = [];
+  // const [sortingArray, setSortingArray] = useState(
+  //   <div className={styles.columns}></div>
+  // );
+  let temp: { index: number; color: ElementStates }[] = [];
   let arr: string[] = [];
-
-  const randomArr = () => {
-    temp = [];
-    const length = getRandomInt(3, 17);
-    for (let i = 0; i < length; i++) {
-      temp.push({ index: getRandomInt(1, 100), state: ElementStates.Default });
-    }
-    drawArr();
-    setArrValue(temp);
-  };
 
   const selectSort = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypeOfSort(event.target.value);
   };
 
-  const drawArr = () => {
-    setSortingArray(
-      <div className={styles.columns}>
-        {temp.map((el) => {
-          return (
-            <Column
-              index={el.index}
-              key={uuidv4()}
-              state={el.state}
-              extraClass="mr-8"
-            ></Column>
-          );
-        })}
-      </div>
-    );
-  };
-
   useEffect(() => {
-    randomArr();
+    temp = randomArr();
+    setArrValue([...temp]);
   }, []);
 
   const ascendingSort = async () => {
@@ -72,58 +46,11 @@ export const SortingPage: React.FC = () => {
     }
 
     if (typeOfSort === "Bubble") {
-      for (let j = temp.length - 1; j > 0; j--) {
-        for (let i = 0; i < j; i++) {
-          if (temp[i].index > temp[i + 1].index) {
-            temp[i].state = ElementStates.Changing;
-            temp[i + 1].state = ElementStates.Changing;
-            await sleep(250);
-            drawArr();
-            let tempory = temp[i];
-            temp[i] = temp[i + 1];
-            temp[i + 1] = tempory;
-            await sleep(250);
-
-            drawArr();
-            temp[i].state = ElementStates.Default;
-            temp[i + 1].state = ElementStates.Default;
-            await sleep(500);
-          }
-        }
-        temp[j].state = ElementStates.Modified;
-        drawArr();
-      }
+      await ascendingBubleSort(temp, setArrValue);
     } else {
-      for (let i = 0, l = temp.length, k = l - 1; i < k; i++) {
-        temp[i].state = ElementStates.Changing;
-        let indexMin = i;
-        for (let j = i + 1; j < l; j++) {
-          temp[j].state = ElementStates.Changing;
-          drawArr();
-          await sleep(250);
-          if (temp[indexMin].index > temp[j].index) {
-            temp[indexMin].state = ElementStates.Default;
-
-            indexMin = j;
-          }
-          temp[i].state = ElementStates.Changing;
-          temp[indexMin].state = ElementStates.Changing;
-          temp[j].state = ElementStates.Default;
-        }
-
-        drawArr();
-        if (indexMin !== i) {
-          [temp[i], temp[indexMin]] = [temp[indexMin], temp[i]];
-        }
-        temp[indexMin].state = ElementStates.Default;
-        temp[i].state = ElementStates.Modified;
-        await sleep(250);
-        drawArr();
-      }
+      await ascendingSelectSort(temp, setArrValue);
     }
-    temp[temp.length - 1].state = ElementStates.Modified;
-    temp[0].state = ElementStates.Modified;
-    drawArr();
+
     setAscendingLoder(false);
     setDisabled(false);
   };
@@ -136,60 +63,11 @@ export const SortingPage: React.FC = () => {
     }
 
     if (typeOfSort === "Bubble") {
-      for (let j = temp.length - 1; j > 0; j--) {
-        for (let i = 0; i < j; i++) {
-          if (temp[i].index < temp[i + 1].index) {
-            temp[i].state = ElementStates.Changing;
-            temp[i + 1].state = ElementStates.Changing;
-            await sleep(250);
-            drawArr();
-            let tempory = temp[i + 1];
-            temp[i + 1] = temp[i];
-            temp[i] = tempory;
-            await sleep(250);
-
-            drawArr();
-            temp[i].state = ElementStates.Default;
-            temp[i + 1].state = ElementStates.Default;
-            await sleep(500);
-          }
-        }
-        temp[j].state = ElementStates.Modified;
-        drawArr();
-      }
+      await descendingBubleSort(temp, setArrValue);
     } else {
-      for (let i = 0, l = temp.length, k = l - 1; i < k; i++) {
-        temp[i].state = ElementStates.Changing;
-
-        let indexMin = i;
-        for (let j = i + 1; j < l; j++) {
-          temp[j].state = ElementStates.Changing;
-
-          await sleep(250);
-          drawArr();
-          if (temp[indexMin].index < temp[j].index) {
-            temp[indexMin].state = ElementStates.Default;
-
-            indexMin = j;
-          }
-          temp[i].state = ElementStates.Changing;
-          temp[indexMin].state = ElementStates.Changing;
-          temp[j].state = ElementStates.Default;
-        }
-
-        drawArr();
-        if (indexMin !== i) {
-          [temp[i], temp[indexMin]] = [temp[indexMin], temp[i]];
-        }
-        temp[indexMin].state = ElementStates.Default;
-        temp[i].state = ElementStates.Modified;
-        await sleep(250);
-        drawArr();
-      }
+      await descendingSelectSort(temp, setArrValue);
     }
-    temp[temp.length - 1].state = ElementStates.Modified;
-    temp[0].state = ElementStates.Modified;
-    drawArr();
+
     setDescendingLoder(false);
     setDisabled(false);
   };
@@ -231,13 +109,27 @@ export const SortingPage: React.FC = () => {
           {" "}
           <Button
             text="Новый массив"
-            onClick={randomArr}
+            onClick={() => {
+              temp = randomArr();
+              setArrValue([...temp]);
+            }}
             disabled={disabled}
             extraClass="buttons"
           ></Button>
         </div>
       </div>
-      {sortingArray}
+      <div className={styles.columns}>
+        {arrValue.map((el) => {
+          return (
+            <Column
+              index={el.index}
+              key={uuidv4()}
+              state={el.color}
+              extraClass="mr-8"
+            ></Column>
+          );
+        })}
+      </div>
     </SolutionLayout>
   );
 };

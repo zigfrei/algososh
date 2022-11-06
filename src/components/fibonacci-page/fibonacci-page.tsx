@@ -15,12 +15,12 @@ export const FibonacciPage: React.FC = () => {
   let temp: { number: string; index: number }[] = [];
 
   const [circles, setCircles] = useState(
-    <div className={styles.circles}></div>
+    <div className={styles.circles} data-testid="circles"></div>
   );
 
   const drawCircles = () => {
     setCircles(
-      <div className={styles.circles}>
+      <div className={styles.circles} data-testid="circles">
         {temp.map((el) => {
           return (
             <Circle
@@ -77,6 +77,7 @@ export const FibonacciPage: React.FC = () => {
     <SolutionLayout title="Последовательность Фибоначчи">
       <div className={styles.content}>
         <Input
+          data-testid="input"
           type="number"
           max={19}
           isLimitText={true}
@@ -85,6 +86,7 @@ export const FibonacciPage: React.FC = () => {
           onChange={onChange}
         ></Input>
         <Button
+          data-testid="button"
           text="Рассчитать"
           onClick={calculateFibonacci}
           isLoader={loader}
