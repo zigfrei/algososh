@@ -5,7 +5,7 @@
 ## Технологии: React js, TypeScript, Jest, Cypress, yarn
 
 ## Сайт размешен на gh-pages:
-[МБОУ АЛГОСОШ им. Фибоначчи](https://zigfrei.github.io/mesto-gitpage/ "")
+[МБОУ АЛГОСОШ им. Фибоначчи](https://zigfrei.github.io/algososh/ "")
 
 ## Доступные команды
 
